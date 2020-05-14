@@ -97,3 +97,17 @@ def account():
 def logout():
     logout_user()
     return redirect(url_for('login'))
+
+@app.route("/account/delete", methods=["GET", "POST"])
+@login_required
+def account_delete():
+    user = current_user.id
+    account = Users.query.filter_by(id=user).first()
+    posts = Posts.query.filter_by(user_id=user).all()
+    logout_user()
+    db.session.delete(account)
+    for post in posts:
+        db.session.delete(post)
+    db.session.commit()
+    return redirect(url_for('home'))
+
